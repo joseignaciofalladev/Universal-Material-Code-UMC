@@ -14,9 +14,7 @@ High-level design:
 - Serializer: package bytecode + const data to binary buffer.
 */
 
-// -----------------------------
 // Math helpers (Vec3, etc.)
-// -----------------------------
 struct Vec3 {
     float x,y,z;
     Vec3(float a=0,float b=0,float c=0):x(a),y(b),z(c){}
@@ -28,9 +26,7 @@ inline Vec3 operator*(float s,const Vec3&a){return a*s;}
 inline Vec3 operator*(const Vec3&a,const Vec3&b){return Vec3(a.x*b.x,a.y*b.y,a.z*b.z);}
 inline Vec3 clamp01(const Vec3&v){return Vec3(min(max(v.x,0.0f),1.0f),min(max(v.y,0.0f),1.0f),min(max(v.z,0.0f),1.0f));}
 
-// -----------------------------
 // Bytecode definition
-// -----------------------------
 enum OpCode : uint8_t {
     OP_NOP = 0,
     OP_PUSH_CONST_VEC3,   // push vec3 constant (index)
@@ -804,4 +800,5 @@ int main(){
         cerr << "Error: " << e.what() << "\n";
     }
     return 0;
+
 }
