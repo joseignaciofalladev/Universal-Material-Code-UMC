@@ -55,7 +55,6 @@ struct Bytecode {
     vector<float> paramsFloat;
 };
 
-// -----------------------------
 // Simple DSL Parser (very small, expression style)
 // Example usage string:
 //
@@ -67,7 +66,6 @@ struct Bytecode {
 //
 // identifiers, numbers, vec3(...), texture("name", uv), mix(a,b,t), normalize(v), noise(uv)
 // assignments to "albedo","normal","mrao" outputs.
-// -----------------------------
 
 // Tokenizer:
 enum TokenType {TK_EOF, TK_IDENT, TK_NUMBER, TK_COMMA, TK_LP, TK_RP, TK_SEMI, TK_EQ, TK_STR};
@@ -214,7 +212,6 @@ struct Parser {
     }
 };
 
-// -----------------------------
 // Compiler: AST -> Bytecode
 // We'll support only producing outputs into three named outputs:
 // "albedo", "normal", "mrao" (metallic, roughness, ao packed into vec3 or float channels).
@@ -402,10 +399,8 @@ struct Compiler {
     }
 };
 
-// -----------------------------
 // VM - Stack machine to execute bytecode for CPU preview.
 // We'll keep a simple stack of variant types: either Vec3 or float.
-// -----------------------------
 struct VMValue {
     enum Type{VEC3, FLOAT} type;
     Vec3 v;
@@ -802,3 +797,4 @@ int main(){
     return 0;
 
 }
+
