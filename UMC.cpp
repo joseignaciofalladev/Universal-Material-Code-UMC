@@ -6,7 +6,6 @@ using namespace std;
 
 /*
 High-level design:
-
 - Mini DSL "UCode" (very small): supports expressions, functions, mix, texture samples.
 - AST nodes => Compiler => Bytecode instructions.
 - VM for CPU-side preview: stack machine executing float vectors (vec3 + floats).
@@ -215,7 +214,6 @@ struct Parser {
 // Compiler: AST -> Bytecode
 // We'll support only producing outputs into three named outputs:
 // "albedo", "normal", "mrao" (metallic, roughness, ao packed into vec3 or float channels).
-// -----------------------------
 struct Compiler {
     Bytecode bc;
     // helper maps for constants/params
@@ -555,10 +553,8 @@ struct VM {
     }
 };
 
-// -----------------------------
 // Shader generator: translate bytecode into GLSL or HLSL code string.
 // We'll generate a fragment function that produces albedo/normal/mrao outputs.
-// -----------------------------
 struct ShaderGen {
     Bytecode *bc;
     ShaderGen(Bytecode*b=nullptr):bc(b){}
@@ -671,11 +667,9 @@ struct ShaderGen {
     }
 };
 
-// -----------------------------
 // Serialization of Bytecode package (very simple)
 // Format:
 // [magic 4 bytes] [version u32] [sizes...] then sections: constVec3, constFloat, texNames, paramsVec3, paramsFloat, code
-// -----------------------------
 vector<uint8_t> serializeBytecode(const Bytecode& bc){
     vector<uint8_t> out;
     auto pushU32 = [&](uint32_t v){ for(int k=0;k<4;++k) out.push_back((v>>(k*8))&0xFF); };
@@ -731,9 +725,7 @@ Bytecode deserializeBytecode(const vector<uint8_t>& in){
     return bc;
 }
 
-// -----------------------------
 // Example usage / demonstration
-// -----------------------------
 int main(){
     try {
         // Example material in mini UCode DSL
@@ -797,4 +789,5 @@ int main(){
     return 0;
 
 }
+
 
