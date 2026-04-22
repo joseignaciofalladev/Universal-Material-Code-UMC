@@ -668,8 +668,7 @@ struct ShaderGen {
 };
 
 // Serialization of Bytecode package (very simple)
-// Format:
-// [magic 4 bytes] [version u32] [sizes...] then sections: constVec3, constFloat, texNames, paramsVec3, paramsFloat, code
+// Format: [magic 4 bytes] [version u32] [sizes...] then sections: constVec3, constFloat, texNames, paramsVec3, paramsFloat, code
 vector<uint8_t> serializeBytecode(const Bytecode& bc){
     vector<uint8_t> out;
     auto pushU32 = [&](uint32_t v){ for(int k=0;k<4;++k) out.push_back((v>>(k*8))&0xFF); };
@@ -724,7 +723,6 @@ Bytecode deserializeBytecode(const vector<uint8_t>& in){
     for(uint32_t i=0;i<codeSz;++i) bc.code.push_back(in[ip++]);
     return bc;
 }
-
 // Example usage / demonstration
 int main(){
     try {
@@ -785,9 +783,5 @@ int main(){
         cout << "UMC prototype completed.\n";
     } catch(const exception &e){
         cerr << "Error: " << e.what() << "\n";
-    }
-    return 0;
-
+    } return 0;
 }
-
-
