@@ -18,6 +18,7 @@ struct Vec3 {
     float x,y,z;
     Vec3(float a=0,float b=0,float c=0):x(a),y(b),z(c){}
 };
+
 inline Vec3 operator+(const Vec3&a,const Vec3&b){return Vec3(a.x+b.x,a.y+b.y,a.z+b.z);}
 inline Vec3 operator-(const Vec3&a,const Vec3&b){return Vec3(a.x-b.x,a.y-b.y,a.z-b.z);}
 inline Vec3 operator*(const Vec3&a,float s){return Vec3(a.x*s,a.y*s,a.z*s);}
@@ -72,6 +73,7 @@ struct Token {
     TokenType type;
     string text;
 };
+
 struct Lexer {
     string s; size_t i=0; Token cur;
     Lexer(const string&src):s(src),i(0){ next(); }
@@ -114,16 +116,15 @@ struct Lexer {
 struct ASTNode {
     virtual ~ASTNode()=default;
 };
+
 using ASTPtr = unique_ptr<ASTNode>;
 struct ExprNode : ASTNode {};
 struct StmtNode : ASTNode {};
-
 struct ExprConstVec3 : ExprNode { Vec3 v; ExprConstVec3(const Vec3&vv):v(vv){} };
 struct ExprConstFloat : ExprNode { float v; ExprConstFloat(float vv):v(vv){} };
 struct ExprVar : ExprNode { string name; ExprVar(string n):name(move(n)){} };
 struct ExprCall : ExprNode { string fname; vector<ASTPtr> args; ExprCall(string f):fname(move(f)){} };
 struct ExprTexture : ExprNode { string texname; ASTPtr uv; ExprTexture(string t, ASTPtr u):texname(move(t)),uv(move(u)){} };
-
 struct StmtAssign : StmtNode { string target; ASTPtr expr; StmtAssign(string t, ASTPtr e):target(move(t)),expr(move(e)){} };
 
 // Parser (very small)
@@ -190,7 +191,6 @@ struct Parser {
         }
         throw runtime_error("parseExpr: unexpected token "+tk.text);
     }
-
     // parse statement assignment: IDENT = expr;
     unique_ptr<StmtAssign> parseStmt(){
         Token t = cur(); if(t.type!=TK_IDENT) throw runtime_error("expected identifier at stmt start");
@@ -200,7 +200,6 @@ struct Parser {
         expect(TK_SEMI);
         return make_unique<StmtAssign>(name, move(expr));
     }
-
     // parse program: multiple stmts
     vector<unique_ptr<StmtAssign>> parseProgram(){
         vector<unique_ptr<StmtAssign>> out;
@@ -732,30 +731,25 @@ int main(){
             normal = normalize( texture("normal_map", uv) * vec3(2.0,2.0,1.0) - vec3(1.0,1.0,0.0) );
             mrao = vec3(0.1, 0.4, 1.0);
         )";
-
         cout << "Parsing program...\n";
         Parser p(sampleProg);
         auto stmts = p.parseProgram();
         cout << "Statements parsed: " << stmts.size() << "\n";
-
         cout << "Compiling...\n";
         Compiler comp;
         // add some material params as an example
         comp.addParamVec3("tint", Vec3(1,1,1));
         Bytecode bc = comp.compileProgram(stmts);
-
         cout << "Bytecode size: " << bc.code.size() << " bytes\n";
         cout << "ConstVec3 count: " << bc.constVec3.size() << "\n";
         cout << "ConstFloat count: " << bc.constFloat.size() << "\n";
         cout << "Texture names: \n";
         for(size_t i=0;i<bc.texNames.size();++i) cout << "  ["<<i<<"] "<<bc.texNames[i]<<"\n";
-
         // Serialize -> deserialize roundtrip
         auto blob = serializeBytecode(bc);
         cout << "Serialized package size: " << blob.size() << " bytes\n";
         Bytecode bc2 = deserializeBytecode(blob);
         cout << "Deserialized. Code size: " << bc2.code.size() << "\n";
-
         // VM preview
         VM vm(&bc2);
         // set a simple tex sampler
@@ -770,7 +764,6 @@ int main(){
         vm.bc = &bc2;
         Vec3 sample = vm.executeSample();
         cout << "VM sample albedo: ("<<sample.x<<","<<sample.y<<","<<sample.z<<")\n";
-
         // Shader generation
         ShaderGen gen(&bc2);
         string glsl = gen.genGLSL();
